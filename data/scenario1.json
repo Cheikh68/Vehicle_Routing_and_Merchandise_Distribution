@@ -1,0 +1,76 @@
+{
+  "name": "Small Distribution Network",
+
+  "depots": [
+    {
+      "id": 1,
+      "stock": 80,
+      "trucks": [
+        { "capacity": 40 },
+        { "capacity": 25 }
+      ]
+    },
+    {
+      "id": 2,
+      "stock": 120,
+      "trucks": [
+        { "capacity": 50 },
+        { "capacity": 30 }
+      ]
+    }
+  ],
+
+  "nodes": [
+    { "id": 3 },
+    { "id": 4 },
+    { "id": 5 },
+    { "id": 6 },
+    { "id": 7 },
+    { "id": 8 }
+  ],
+
+  "edges": [
+    { "from": 1, "to": 3, "time": 15 },
+    { "from": 3, "to": 4, "time": 10 },
+    { "from": 4, "to": 5, "time": 10 },
+    { "from": 5, "to": 6, "time": 15 },
+    { "from": 6, "to": 2, "time": 20 },
+
+    { "from": 3, "to": 7, "time": 20 },
+    { "from": 6, "to": 8, "time": 15 },
+    { "from": 7, "to": 8, "time": 30 }
+  ],
+
+  "orders": [
+    {
+      "id": 1,
+      "amount": 20,
+      "destination": 3
+    },
+    {
+      "id": 2,
+      "amount": 15,
+      "destination": 4
+    },
+    {
+      "id": 3,
+      "amount": 25,
+      "destination": 5
+    },
+    {
+      "id": 4,
+      "amount": 30,
+      "destination": 6
+    },
+    {
+      "id": 5,
+      "amount": 10,
+      "destination": 7
+    },
+    {
+      "id": 6,
+      "amount": 20,
+      "destination": 8
+    }
+  ]
+}
