@@ -2,6 +2,7 @@ import networkx as nx
 from entities.node import Node, Depot
 from entities.order import Order
 from entities.truck import Truck
+from datetime import datetime
 import json
 
 
@@ -74,9 +75,8 @@ def get_order_list(scenario, node_lookup):
             Order(
                 order_data["id"],
                 order_data["amount"],
-                node_lookup[
-                    order_data["destination"]
-                ]
+                node_lookup[order_data["destination"]],
+                datetime.fromisoformat(order_data["deadline"])
             )
         )
 

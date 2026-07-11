@@ -1,41 +1,39 @@
-from entities.node import Depot
-from entities.order import Order
-from entities.node import Node
 from datetime import timedelta
+from entities.route import Route
 
 
-def truck_routes_for_depot(depot: Depot, order_list: list[Order], shortest_paths: dict):
-    ALPHA = 10  # lateness penalty weight
+def truck_routes_for_depot(depot, order_list, shortest_paths):
+    ALPHA = 10
     unassigned_orders = set(order_list)
 
-    # largest trucks first
-    trucks = sorted(depot.truck_list, key=lambda t: t.capacity, reverse=True)
+    trucks = sorted(
+        depot.truck_list,
+        key=lambda t: t.capacity,
+        reverse=True
+    )
 
-    def get_best_order(current_node: Node, current_time, remaining_capacity: int) -> Order | None:
+    def get_best_order(current_node, current_time, remaining_capacity):
         best_order = None
         best_cost = float("inf")
 
         for order in unassigned_orders:
-            # capacity feasibility
             if order.required_amount > remaining_capacity:
                 continue
 
-            travel_minutes = shortest_paths[current_node][order.recipient_location]["length"]
+            travel = shortest_paths[
+                current_node
+            ][
+                order.recipient_location
+            ]["length"]
 
-            arrival_time = (
-                current_time
-                + timedelta(minutes=travel_minutes)
-            )
+            arrival = current_time + timedelta(minutes=travel)
 
-            lateness_minutes = max(
+            lateness = max(
                 0,
-                (arrival_time - order.deadline).total_seconds() / 60
+                (arrival - order.deadline).total_seconds()/60
             )
 
-            cost = (
-                travel_minutes
-                + ALPHA * lateness_minutes
-            )
+            cost = travel + ALPHA * lateness
 
             if cost < best_cost:
                 best_cost = cost
@@ -43,66 +41,81 @@ def truck_routes_for_depot(depot: Depot, order_list: list[Order], shortest_paths
 
         return best_order
 
-    # Build one route per truck
     for truck in trucks:
         if not unassigned_orders:
             break
 
-        route = [depot]
+        start_time = truck.available_from
         current_node = depot
-        current_time = truck.available_from
+        current_time = start_time
         remaining_capacity = truck.capacity
 
+        route_orders = []
+
         while True:
-            best_order = get_best_order(
+            order = get_best_order(
                 current_node,
                 current_time,
                 remaining_capacity
             )
 
-            if best_order is None:
+            if order is None:
                 break
 
-            # travel to order
-            travel_minutes = shortest_paths[current_node][best_order.recipient_location]["length"]
-            current_time += timedelta(minutes=travel_minutes)
-            truck.available_from = current_time
+            travel = shortest_paths[
+                current_node
+            ][
+                order.recipient_location
+            ]["length"]
 
-            route.append(best_order.recipient_location)
-            remaining_capacity -= best_order.required_amount
-            current_node = best_order.recipient_location
-            unassigned_orders.remove(best_order)
+            current_time += timedelta(minutes=travel)
+            remaining_capacity -= order.required_amount
+            current_node = order.recipient_location
+            route_orders.append(order)
+            unassigned_orders.remove(order)
 
-        route.append(depot)
-        truck.routes.append(route)
-
-    # Any remaining orders?
-    if unassigned_orders:
-        print(
-            f"{len(unassigned_orders)} orders "
-            "could not be assigned."
+        route = Route(
+            depot=depot,
+            orders=route_orders,
+            start_time=start_time
         )
 
-        return {
-            "assigned": list(set(order_list) - unassigned_orders),
-            "unassigned": list(unassigned_orders)
-        }
+        truck.routes.append(route)
+        truck.available_from = route.finish_time(shortest_paths)
 
     return {
-        "assigned": order_list,
-        "unassigned": []
+        "assigned": list(set(order_list) - unassigned_orders),
+        "unassigned": list(unassigned_orders)
     }
 
 
-def truck_assignment(depot_list: list[Depot], shortest_paths: dict):
+def truck_assignment(depot_list, shortest_paths):
     results = {}
 
     for depot in depot_list:
-        results[depot] = truck_routes_for_depot(depot, depot.order_list, shortest_paths)
+        results[depot] = truck_routes_for_depot(
+            depot,
+            depot.order_list,
+            shortest_paths
+        )
 
     for depot, result in results.items():
-        print(f"For depot {depot.node_id}: {result}")
+        print(f"\nDepot {depot.node_id}")
+        print(result)
+
         for truck in depot.truck_list:
-            print(f"Truck {truck.capacity}: {[[node.node_id for node in route] for route in truck.routes]}")
+            print(f"Truck {truck.capacity}")
+
+            for route in truck.routes:
+                print(
+                    [order.recipient_location.node_id
+                     for order in route.orders]
+                )
+                print(
+                    f"Load: {route.load()}"
+                )
+                print(
+                    f"Distance: {route.total_distance(shortest_paths)}"
+                )
 
     return results

@@ -7,8 +7,7 @@ class Order:
     order_id: int
     required_amount: int
     recipient_location: "Node"
-
-    deadline: datetime = field(init=False, default=datetime(2026, 6, 1, 11, 0, tzinfo=UTC))
+    deadline: datetime
 
     def __hash__(self):
         return hash(self.order_id)

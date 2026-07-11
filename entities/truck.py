@@ -8,7 +8,7 @@ class Truck:
 
     current_location: "Node" = field(init=False)
     available_from: datetime = field(init=False)
-    routes: list[list["Node"]] = field(init=False)
+    routes: list["Route"] = field(init=False)
 
     def __post_init__(self):
         self.available_from = datetime.min.replace(tzinfo=UTC)
