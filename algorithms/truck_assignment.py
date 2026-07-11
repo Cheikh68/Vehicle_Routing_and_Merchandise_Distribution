@@ -2,8 +2,7 @@ from datetime import timedelta
 from entities.route import Route
 
 
-def truck_routes_for_depot(depot, order_list, shortest_paths):
-    ALPHA = 10
+def truck_routes_for_depot(depot, order_list, shortest_paths, ALPHA):
     unassigned_orders = set(order_list)
 
     trucks = sorted(
@@ -89,14 +88,15 @@ def truck_routes_for_depot(depot, order_list, shortest_paths):
     }
 
 
-def truck_assignment(depot_list, shortest_paths):
+def truck_assignment(depot_list, shortest_paths, ALPHA):
     results = {}
 
     for depot in depot_list:
         results[depot] = truck_routes_for_depot(
             depot,
             depot.order_list,
-            shortest_paths
+            shortest_paths,
+            ALPHA
         )
 
     for depot, result in results.items():

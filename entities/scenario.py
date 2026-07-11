@@ -3,7 +3,10 @@ from data.data_loader import load_scenario, get_graph, get_depot_list, get_desti
 
 
 class Scenario:
-    def __init__(self, filename):
+    ALPHA: int
+
+    def __init__(self, filename, alpha):
+        self.ALPHA = alpha
 
         data = load_scenario(filename)
 

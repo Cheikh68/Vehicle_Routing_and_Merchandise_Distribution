@@ -1,11 +1,8 @@
 from entities.route import Route
-from entities.scenario import Scenario
 
 
-def optimize_routes(scenario: Scenario):
-    ALPHA = 10
-
-    for depot in scenario.depots:
+def optimize_routes(shortest_paths, depot_list, ALPHA):
+    for depot in depot_list:
         for truck in depot.truck_list:
             for route in truck.routes:
                 if len(route.orders) < 2:
@@ -17,7 +14,7 @@ def optimize_routes(scenario: Scenario):
                     improved = False
 
                     best_cost = route.route_cost(
-                        scenario.shortest_paths,
+                        shortest_paths,
                         ALPHA
                     )
 
@@ -37,7 +34,7 @@ def optimize_routes(scenario: Scenario):
                             )
 
                             candidate_cost = candidate_route.route_cost(
-                                scenario.shortest_paths,
+                                shortest_paths,
                                 ALPHA
                             )
 

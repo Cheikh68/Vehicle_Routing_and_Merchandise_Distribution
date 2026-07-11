@@ -4,7 +4,7 @@ from algorithms.route_optimization import optimize_routes
 from entities.scenario import Scenario
 
 if __name__ == '__main__':
-    scenario = Scenario("data/scenario1.json")
+    scenario = Scenario("data/scenario1.json", 10)
     depot_assignment = assign_order_to_depot(scenario.depots, scenario.shortest_paths, scenario.orders)
-    truck_assignment = truck_assignment(scenario.depots, scenario.shortest_paths)
-    optimize_routes(scenario)
+    truck_assignment = truck_assignment(scenario.depots, scenario.shortest_paths, scenario.ALPHA)
+    optimize_routes(scenario.shortest_paths, scenario.depots, scenario.ALPHA)
