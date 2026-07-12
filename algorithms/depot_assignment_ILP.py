@@ -34,6 +34,7 @@ def assign_order_to_depot(depot_list: list[Depot], shortest_paths: dict[Node, di
 
     status = model.solve()
 
+    print("Part 1: Assigning orders to depots")
     print("Status:", pulp.LpStatus[status])
     for o in order_list:
         for d in depot_list:

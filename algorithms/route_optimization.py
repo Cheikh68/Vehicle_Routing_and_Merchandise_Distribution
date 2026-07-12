@@ -2,8 +2,13 @@ from entities.route import Route
 
 
 def optimize_routes(shortest_paths, depot_list, ALPHA):
+    print("Part 3: intra-route optimization (changing individual delivery sequences)")
+
     for depot in depot_list:
+        print(f"Depot {depot.node_id}:")
+
         for truck in depot.truck_list:
+
             for route in truck.routes:
                 if len(route.orders) < 2:
                     continue
@@ -46,3 +51,18 @@ def optimize_routes(shortest_paths, depot_list, ALPHA):
 
                         if improved:
                             break
+
+            print(f"Truck {truck.capacity}:")
+            for route in truck.routes:
+                print(
+                    [order.order_id
+                     for order in route.orders]
+                )
+                print(
+                    f"Required load: {route.load()}"
+                )
+                print(
+                    f"Distance to travel: {route.total_distance(shortest_paths)}"
+                )
+
+        print()

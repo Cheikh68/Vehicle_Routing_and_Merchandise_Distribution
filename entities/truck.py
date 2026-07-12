@@ -11,5 +11,7 @@ class Truck:
     routes: list["Route"] = field(init=False)
 
     def __post_init__(self):
-        self.available_from = datetime.min.replace(tzinfo=UTC)
+        self.available_from = datetime(
+                2026, 5, 31, 22, 0, tzinfo=UTC
+            )
         self.routes = []
