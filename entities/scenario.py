@@ -4,9 +4,13 @@ from data.data_loader import load_scenario, get_graph, get_depot_list, get_desti
 
 class Scenario:
     ALPHA: int
+    BETA: int
+    GAMMA: int
 
-    def __init__(self, filename, alpha):
+    def __init__(self, filename, alpha, beta, gamma):
         self.ALPHA = alpha
+        self.BETA = beta
+        self.GAMMA = gamma
 
         data = load_scenario(filename)
 
